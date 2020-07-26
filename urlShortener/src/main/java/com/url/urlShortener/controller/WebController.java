@@ -5,10 +5,7 @@ import com.url.urlShortener.services.WebService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,15 +13,24 @@ import java.util.List;
 @RestController
 public class WebController{
     private WebService webService;
-    private List<UrlFormat> urlList = new ArrayList<UrlFormat>();
+    private List<UrlFormat> urlList = new ArrayList<>();
 
     @GetMapping("/urlxalias")
-    public List<UrlFormat> getUrlByAlias(){
+    public List<UrlFormat> getUrlWithAlias(){
         return urlList;
     }
 
+    @GetMapping("/{alias}")
+    public ResponseEntity getOriginalUrl(@PathVariable String alias){
+        UrlFormat urlFormat = webService.getOriginalUrl(urlList, alias);
+        if(urlFormat != null)
+            return new ResponseEntity(urlFormat.getUrl(), HttpStatus.OK);
+        else
+            return new ResponseEntity("Alias no encontrado", HttpStatus.NOT_FOUND);
+    }
+
     @PostMapping(path = "/", consumes = "application/json")
-    public ResponseEntity<String> createAlias(@RequestBody UrlFormat urlFormat) {
+    public ResponseEntity createAlias(@RequestBody UrlFormat urlFormat) {
         UrlFormat newUrlFormat = webService.foundUrl(urlList, urlFormat.getUrl());
         if(newUrlFormat != null){
             return new ResponseEntity("alias:"+ newUrlFormat.getAlias(), HttpStatus.OK);
@@ -33,7 +39,7 @@ public class WebController{
             String result = webService.createAlias(urlFormat.getUrl());
 
             if(result.equals("-1"))
-                return new ResponseEntity<>("La url no es correcta", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity("La url no es correcta", HttpStatus.BAD_REQUEST);
             else{
                 urlFormat.setAlias(result);
                 urlList.add(urlFormat);

@@ -15,21 +15,37 @@ public class WebServiceImpl implements WebService {
     @Override
     public String createAlias(String url){
         if(validateUrl(url)){
-            String alias = generateAlias(url);
-            return alias;
+            return generateAlias(url);
         }
         return "-1";
     }
     
     @Override
     public UrlFormat foundUrl(List<UrlFormat> urlList, String newUrl){
-        UrlFormat urlFormat = null;
-        for (UrlFormat url: urlList) {
-            if (url.getUrl().equals(newUrl)){
-                urlFormat = url;
-            }
+       try{
+           UrlFormat urlFormat = urlList.stream().filter(
+                   url -> url.getUrl().equals(newUrl)
+           ).findFirst().get();
+
+           return urlFormat;
+
+       }catch (Exception ex){
+           return null;
+       }
+    }
+
+    @Override
+    public UrlFormat getOriginalUrl(List<UrlFormat> urlList, String alias){
+        try {
+            UrlFormat urlObj = urlList.stream().filter(
+                    urlFormat -> urlFormat.getAlias().equals(alias)
+            ).findFirst().get();
+
+            return urlObj;
+
+        }catch (Exception ex){
+            return null;
         }
-        return urlFormat;
     }
 
     public boolean validateUrl(String url){
@@ -50,7 +66,7 @@ public class WebServiceImpl implements WebService {
 
         }
         else if(url.contains("yahoo")){
-            length = 5;
+            length = 7;
             alias = RandomStringUtils.random(length, true, true);
         }
         else{
@@ -60,6 +76,4 @@ public class WebServiceImpl implements WebService {
 
         return alias;
     }
-    
-   
 }
