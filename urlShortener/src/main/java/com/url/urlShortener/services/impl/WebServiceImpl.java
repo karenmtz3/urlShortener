@@ -23,11 +23,9 @@ public class WebServiceImpl implements WebService {
     @Override
     public UrlFormat foundUrl(List<UrlFormat> urlList, String newUrl){
        try{
-           UrlFormat urlFormat = urlList.stream().filter(
+           return urlList.stream().filter(
                    url -> url.getUrl().equals(newUrl)
            ).findFirst().get();
-
-           return urlFormat;
 
        }catch (Exception ex){
            return null;
@@ -37,11 +35,9 @@ public class WebServiceImpl implements WebService {
     @Override
     public UrlFormat getOriginalUrl(List<UrlFormat> urlList, String alias){
         try {
-            UrlFormat urlObj = urlList.stream().filter(
+            return urlList.stream().filter(
                     urlFormat -> urlFormat.getAlias().equals(alias)
             ).findFirst().get();
-
-            return urlObj;
 
         }catch (Exception ex){
             return null;

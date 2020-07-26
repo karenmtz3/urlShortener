@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 public class WebController{
     private WebService webService;
-    private List<UrlFormat> urlList = new ArrayList<>();
+    public final List<UrlFormat> urlList = new ArrayList<>();
 
     @GetMapping("/urlxalias")
     public List<UrlFormat> getUrlWithAlias(){
@@ -21,29 +21,29 @@ public class WebController{
     }
 
     @GetMapping("/{alias}")
-    public ResponseEntity getOriginalUrl(@PathVariable String alias){
+    public ResponseEntity<String> getOriginalUrl(@PathVariable String alias){
         UrlFormat urlFormat = webService.getOriginalUrl(urlList, alias);
         if(urlFormat != null)
-            return new ResponseEntity(urlFormat.getUrl(), HttpStatus.OK);
+            return new ResponseEntity<>(urlFormat.getUrl(), HttpStatus.OK);
         else
-            return new ResponseEntity("Alias no encontrado", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Alias no encontrado", HttpStatus.NOT_FOUND);
     }
 
     @PostMapping(path = "/", consumes = "application/json")
-    public ResponseEntity createAlias(@RequestBody UrlFormat urlFormat) {
+    public ResponseEntity<String> createAlias(@RequestBody UrlFormat urlFormat) {
         UrlFormat newUrlFormat = webService.foundUrl(urlList, urlFormat.getUrl());
         if(newUrlFormat != null){
-            return new ResponseEntity("alias:"+ newUrlFormat.getAlias(), HttpStatus.OK);
+            return new ResponseEntity<>("alias:"+ newUrlFormat.getAlias(), HttpStatus.OK);
         }
         else{
             String result = webService.createAlias(urlFormat.getUrl());
 
             if(result.equals("-1"))
-                return new ResponseEntity("La url no es correcta", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("La url no es correcta", HttpStatus.BAD_REQUEST);
             else{
                 urlFormat.setAlias(result);
                 urlList.add(urlFormat);
-                return new ResponseEntity("alias: "+result, HttpStatus.OK);
+                return new ResponseEntity<>("alias: "+result, HttpStatus.OK);
             }
         }
     }
