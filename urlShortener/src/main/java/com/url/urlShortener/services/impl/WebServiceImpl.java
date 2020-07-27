@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 @Service
 public class WebServiceImpl implements WebService {
 
@@ -44,7 +43,7 @@ public class WebServiceImpl implements WebService {
         }
     }
 
-    public boolean validateUrl(String url){
+    private boolean validateUrl(String url){
         UrlValidator urlValidator = new UrlValidator();
         boolean result = urlValidator.isValid(url) ||
                 urlValidator.isValid("http://" + url) ||
@@ -52,7 +51,7 @@ public class WebServiceImpl implements WebService {
         return result;
     }
 
-    public String generateAlias(String url){
+    private String generateAlias(String url){
         String alias;
         int length;
 

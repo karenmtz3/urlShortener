@@ -13,12 +13,7 @@ import java.util.List;
 @RestController
 public class WebController{
     private WebService webService;
-    public final List<UrlFormat> urlList = new ArrayList<>();
-
-    @GetMapping("/urlxalias")
-    public List<UrlFormat> getUrlWithAlias(){
-        return urlList;
-    }
+    private final List<UrlFormat> urlList = new ArrayList<>();
 
     @GetMapping("/{alias}")
     public ResponseEntity<String> getOriginalUrl(@PathVariable String alias){
@@ -33,7 +28,7 @@ public class WebController{
     public ResponseEntity<String> createAlias(@RequestBody UrlFormat urlFormat) {
         UrlFormat newUrlFormat = webService.foundUrl(urlList, urlFormat.getUrl());
         if(newUrlFormat != null){
-            return new ResponseEntity<>("alias:"+ newUrlFormat.getAlias(), HttpStatus.OK);
+            return new ResponseEntity<>("alias: "+ newUrlFormat.getAlias(), HttpStatus.OK);
         }
         else{
             String result = webService.createAlias(urlFormat.getUrl());
